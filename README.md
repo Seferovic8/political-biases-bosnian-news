@@ -4,20 +4,6 @@ A machine learning project for analyzing Bosnian news articles across four polit
 
 The repository contains the complete workflow: data collection and preparation, LLM-assisted annotation, supervised and unsupervised modelling, evaluation, and a Django web application for interactive article analysis.
 
-## Live application
-
-The deployed application can be tested here:
-
-### [Open the Political Biases in Bosnian News application](https://political-biases-bosnian-news-production.up.railway.app/)
-
-The application supports:
-
-- direct input of one or more news articles;
-- automatic extraction of articles from supported news URLs;
-- selection between Logistic Regression, BERTić, and ensemble predictions;
-- topic mention and stance predictions;
-- confidence scores and per-topic visualizations;
-- combined analysis of multiple articles.
 
 ## Datasets
 
