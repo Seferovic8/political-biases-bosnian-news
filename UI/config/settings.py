@@ -51,7 +51,12 @@ TEMPLATES = [
 WSGI_APPLICATION = "config.wsgi.application"
 
 # No database is required for this application.
-DATABASES = {}
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
+    }
+}
 
 # ---------------------------------------------------------------------------
 # Internationalization
