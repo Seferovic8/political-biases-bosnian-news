@@ -1,3 +1,7 @@
+Test url: https://political-biases-bosnian-news-production.up.railway.app/
+
+Download models on this link: https://drive.google.com/file/d/1IAcO9iXot8fEzvYv0_ZaMyFMPoOMd-u3/view?usp=drive_link
+
 # Stav — Article Stance Analysis
 
 A Django web application that predicts, for Bosnian/regional news articles,

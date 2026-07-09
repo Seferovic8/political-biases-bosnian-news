@@ -1,5 +1,6 @@
 # Model artefacts
 
+Download models on this link: https://drive.google.com/file/d/1IAcO9iXot8fEzvYv0_ZaMyFMPoOMd-u3/view?usp=drive_link
 Drop the trained models here (or point the env vars in `config/settings.py`
 at another location). The layout mirrors the evaluation / inference notebooks:
 
