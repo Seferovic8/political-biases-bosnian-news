@@ -1,0 +1,212 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stav · Article Stance Analysis</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet"
+  />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="{% static 'predictor/css/app.css' %}" />
+</head>
+<body>
+  <!-- data island for the JS app -->
+  <script id="bootstrap-status" type="application/json">{{ status_json|safe }}</script>
+  <script id="bootstrap-topics" type="application/json">{{ topics_json|safe }}</script>
+  <script id="bootstrap-classmeta" type="application/json">{{ class_meta_json|safe }}</script>
+  <script id="bootstrap-methodnames" type="application/json">{{ method_names_json|safe }}</script>
+
+  <header class="masthead">
+    <div class="wrap masthead-inner">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">
+          <span class="tick tick--against"></span>
+          <span class="tick tick--neutral"></span>
+          <span class="tick tick--for"></span>
+        </span>
+        <div class="brand-text">
+          <h1>Stav</h1>
+          <p>Article stance analysis desk</p>
+        </div>
+      </div>
+      <div id="mode-banner" class="mode-banner" role="status"></div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <!-- 01 · MODEL ---------------------------------------------------->
+    <section class="section" id="section-model">
+      <div class="section-head">
+        <span class="eyebrow">01 — Model</span>
+        <h2>Choose a prediction method</h2>
+        <p class="lede">
+          Each method runs a two-stage pipeline: first it decides whether a
+          topic is mentioned, then it reads the stance for the mentioned topics.
+        </p>
+      </div>
+      <div class="method-grid" id="method-grid" role="radiogroup" aria-label="Prediction method">
+        <button class="method-card" data-method="logreg" role="radio" aria-checked="false">
+          <span class="method-name">LogReg</span>
+          <span class="method-desc">TF-IDF + logistic regression. Fastest; reads the article body.</span>
+          <span class="method-flag" data-flag="logreg"></span>
+        </button>
+        <button class="method-card" data-method="bertic" role="radio" aria-checked="false">
+          <span class="method-name">BERTić</span>
+          <span class="method-desc">Fine-tuned transformer. Reads title and body together.</span>
+          <span class="method-flag" data-flag="bertic"></span>
+        </button>
+        <button class="method-card" data-method="ensemble" role="radio" aria-checked="false">
+          <span class="method-name">Ensemble</span>
+          <span class="method-desc">Soft-vote of LogReg and BERTić. Adds a model comparison.</span>
+          <span class="method-flag" data-flag="ensemble"></span>
+        </button>
+      </div>
+    </section>
+
+    <!-- 02 · INPUT ---------------------------------------------------->
+    <section class="section" id="section-input">
+      <div class="section-head">
+        <span class="eyebrow">02 — Input</span>
+        <h2>How do you want to add articles?</h2>
+      </div>
+      <div class="tabs" role="tablist" aria-label="Input method">
+        <button class="tab is-active" data-tab="manual" role="tab" aria-selected="true">
+          Type them in
+        </button>
+        <button class="tab" data-tab="url" role="tab" aria-selected="false">
+          Fetch from a URL
+        </button>
+      </div>
+
+      <div class="tab-panel is-active" data-panel="manual">
+        <div class="field-row">
+          <label class="field">
+            <span class="field-label">Title <span class="field-hint">optional</span></span>
+            <input type="text" id="manual-title" placeholder="Article headline" />
+          </label>
+        </div>
+        <label class="field">
+          <span class="field-label">Article text</span>
+          <textarea id="manual-content" rows="5"
+            placeholder="Paste or write the full article text here…"></textarea>
+        </label>
+        <div class="row-actions">
+          <button class="btn btn--primary" id="add-manual">Add article</button>
+          <span class="inline-note" id="manual-note"></span>
+        </div>
+      </div>
+
+      <div class="tab-panel" data-panel="url">
+        <label class="field">
+          <span class="field-label">Article URLs</span>
+          <textarea id="url-input" rows="4"
+            placeholder="One URL per line…&#10;https://www.klix.ba/…&#10;https://lat.rtrs.tv/…&#10;https://stav.ba/…"></textarea>
+        </label>
+        <p class="portals-note">
+          Supported portals:
+          {% for p in supported_portals %}<span class="chip">{{ p }}</span>{% endfor %}
+        </p>
+        <div class="row-actions">
+          <button class="btn btn--primary" id="fetch-urls">Fetch articles</button>
+          <span class="inline-note" id="url-note"></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03 · ARTICLES ------------------------------------------------->
+    <section class="section" id="section-articles">
+      <div class="section-head">
+        <span class="eyebrow">03 — Queue</span>
+        <h2>Articles to analyse <span class="count-pill" id="article-count">0</span></h2>
+        <p class="lede" id="queue-empty-note">
+          Nothing queued yet. Add articles above and they will appear here as
+          cards you can review, edit, or remove.
+        </p>
+      </div>
+      <div class="card-stack" id="article-list"></div>
+      <div class="predict-bar" id="predict-bar" hidden>
+        <div class="predict-bar-info">
+          <span id="predict-bar-count">0 articles</span>
+          <span class="dot">·</span>
+          <span id="predict-bar-method">no method selected</span>
+        </div>
+        <div class="predict-bar-actions">
+          <button class="btn btn--ghost" id="clear-all">Clear all</button>
+          <button class="btn btn--primary btn--lg" id="run-predict">Predict</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04 · RESULTS -------------------------------------------------->
+    <section class="section" id="section-results" hidden>
+      <div class="section-head">
+        <span class="eyebrow">04 — Results</span>
+        <h2>Per-article predictions</h2>
+        <p class="lede" id="results-meta"></p>
+      </div>
+      <div class="card-stack" id="results-list"></div>
+    </section>
+
+    <!-- 05 · COMBINED ------------------------------------------------->
+    <section class="section" id="section-combined" hidden>
+      <div class="section-head">
+        <span class="eyebrow">05 — Overview</span>
+        <h2>Combined analysis</h2>
+        <p class="lede">
+          Aggregated across every article and every topic. Net stance is the
+          share of <em>for</em> minus the share of <em>against</em> among
+          mentioning articles.
+        </p>
+      </div>
+
+      <div class="grid-2">
+        <div class="panel">
+          <h3 class="panel-title">Final-label distribution</h3>
+          <div class="chart-box"><canvas id="chart-distribution"></canvas></div>
+        </div>
+        <div class="panel">
+          <h3 class="panel-title">Topic coverage &amp; net stance</h3>
+          <div class="chart-box"><canvas id="chart-topics"></canvas></div>
+        </div>
+      </div>
+
+      <div class="panel" id="panel-comparison" hidden>
+        <h3 class="panel-title">Model comparison — LogReg vs BERTić</h3>
+        <div class="comparison-head" id="comparison-head"></div>
+        <div class="chart-box chart-box--short"><canvas id="chart-comparison"></canvas></div>
+        <div id="disagreement-list" class="disagreement-list"></div>
+      </div>
+
+      <div class="panel">
+        <h3 class="panel-title">Heatmap — articles × topics</h3>
+        <p class="panel-sub">Each cell is the predicted class; opacity tracks confidence.</p>
+        <div class="heatmap-scroll">
+          <div class="heatmap" id="heatmap"></div>
+        </div>
+        <div class="legend" id="heatmap-legend"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">
+      <p>
+        Two-stage LogReg / BERTić / ensemble pipeline over four topics:
+        Euro-Atlantic integration, genocide denial, civic vs. constituent
+        model, electoral reform.
+      </p>
+    </div>
+  </footer>
+
+  <!-- toast host -->
+  <div class="toast-host" id="toast-host" aria-live="polite"></div>
+
+  <script src="{% static 'predictor/js/app.js' %}"></script>
+</body>
+</html>

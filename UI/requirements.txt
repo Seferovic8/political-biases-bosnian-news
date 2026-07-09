@@ -1,0 +1,5 @@
+# Base requirements — enough to run the app in DEMO mode
+# (deterministic keyword predictor, no trained models needed).
+Django>=5.0,<5.2
+requests>=2.31
+beautifulsoup4>=4.12
