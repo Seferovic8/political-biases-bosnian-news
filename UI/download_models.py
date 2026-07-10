@@ -7,7 +7,7 @@ BASE_DIR = Path(__file__).resolve().parent
 MODELS_DIR = BASE_DIR / "models"
 ZIP_PATH = BASE_DIR / "models.zip"
 
-FILE_ID = "1IAcO9iXot8fEzvYv0_ZaMyFMPoOMd-u3"
+FILE_ID = "1tggczkfcBL8q9PIS_OGhSOE9nPkV3PWR"
 
 if not FILE_ID:
     print("GOOGLE_DRIVE_MODELS_ID nije postavljen, preskačem download.")
@@ -24,7 +24,7 @@ gdown.download(url, str(ZIP_PATH), quiet=False)
 
 print("Raspakujem modele...")
 with zipfile.ZipFile(ZIP_PATH, "r") as zip_ref:
-    zip_ref.extractall(BASE_DIR)
+    zip_ref.extractall(MODELS_DIR)
 
 ZIP_PATH.unlink(missing_ok=True)
 
