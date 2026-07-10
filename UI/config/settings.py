@@ -91,7 +91,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # using a deterministic keyword predictor, so the interface is fully usable
 # without the (multi-GB) model files.
 MODELS_ROOT = Path(os.environ.get("MODELS_ROOT", BASE_DIR / "models"))
-
+print(MODELS_ROOT)
 ML_CONFIG = {
     "MODELS_ROOT": MODELS_ROOT,
     "LOGREG_BINARY_SOURCE": Path(
