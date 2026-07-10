@@ -4,6 +4,20 @@ A machine learning project for analyzing Bosnian news articles across four polit
 
 The repository contains the complete workflow: data collection and preparation, LLM-assisted annotation, supervised and unsupervised modelling, evaluation, and a Django web application for interactive article analysis.
 
+## Live application
+
+The deployed application can be tested here:
+
+### [Open the Political Biases in Bosnian News application](https://political-biases-bosnian-news-production.up.railway.app/)
+
+The application supports:
+
+- direct input of one or more news articles;
+- automatic extraction of articles from supported news URLs;
+- selection between Logistic Regression, BERTić, and ensemble predictions;
+- topic mention and stance predictions;
+- confidence scores and per-topic visualizations;
+- combined analysis of multiple articles.
 
 ## Datasets
 
@@ -81,6 +95,9 @@ The project workflow consists of the following stages:
    The final models were integrated into a Django application for interactive article analysis.
 
 ## Models
+
+> **Recommended model for most users: Logistic Regression (LogReg).**  
+> BERTić requires significantly more computational resources and is considerably slower, especially when running without a GPU. For local use, CPU-only environments, and faster predictions, users should select **LogReg**. BERTić and the ensemble are primarily intended for environments with a compatible GPU and sufficient memory.
 
 The project evaluates several approaches, including:
 
@@ -185,6 +202,8 @@ http://127.0.0.1:8000/
 
 The trained model files are large and are therefore not included directly in the repository.
 
+For most installations, only the Logistic Regression artifacts are recommended. LogReg runs efficiently on a CPU and provides much faster inference. BERTić requires PyTorch and Transformers, benefits strongly from a GPU, uses substantially more memory, and may be slow in CPU-only environments.
+
 Install the additional machine learning dependencies:
 
 ```bash
@@ -255,7 +274,8 @@ The prediction service automatically selects the live model engine when model ar
 ## Notes
 
 - A database is not required for the main prediction workflow.
-- BERTić uses the article title and body, while the linear models primarily use article text.
+- Logistic Regression is the recommended option for most users because it is fast and runs efficiently without a GPU.
+- BERTić uses the article title and body, requires more memory and computational resources, and can be slow without a compatible GPU.
 - The application supports batch analysis of multiple articles.
 - Visualizations require browser access to the Chart.js CDN.
 - The datasets and models can require substantial storage and memory.
