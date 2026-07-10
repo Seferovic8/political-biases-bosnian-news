@@ -93,7 +93,7 @@
       });
     });
     // preselect ensemble if available, else first available
-    const pref = ["ensemble", "logreg", "bertic"].find((m) =>
+    const pref = ["logreg", "ensemble", "bertic"].find((m) =>
       STATUS.available_methods.includes(m)
     );
     if (pref) {
@@ -144,41 +144,35 @@
         a.status === "loading"
           ? `<div class="card-url">${esc(a.url)}</div>`
           : a.status === "error"
-          ? `<div class="card-url">${esc(a.url || "")}</div>`
-          : `<div class="card-text" data-role="content" ${
-              a.editing ? 'contenteditable="true"' : ""
+            ? `<div class="card-url">${esc(a.url || "")}</div>`
+            : `<div class="card-text" data-role="content" ${a.editing ? 'contenteditable="true"' : ""
             }>${esc(a.content || "")}</div>`;
 
       card.innerHTML = `
         <div class="card-top">
           <div style="min-width:0">
             <span class="card-source"><span class="source-dot"></span>${esc(a.source)}</span>
-            <h3 class="card-title" data-role="title" ${
-              a.editing ? 'contenteditable="true"' : ""
-            }>${esc(a.title || "(untitled)")}</h3>
+            <h3 class="card-title" data-role="title" ${a.editing ? 'contenteditable="true"' : ""
+        }>${esc(a.title || "(untitled)")}</h3>
           </div>
           <div class="card-actions">
-            ${
-              a.status === "ready"
-                ? `<button class="icon-btn" data-act="edit" title="${
-                    a.editing ? "Save" : "Edit"
-                  }">${a.editing ? "✓" : "✎"}</button>`
-                : ""
-            }
+            ${a.status === "ready"
+          ? `<button class="icon-btn" data-act="edit" title="${a.editing ? "Save" : "Edit"
+          }">${a.editing ? "✓" : "✎"}</button>`
+          : ""
+        }
             <button class="icon-btn icon-btn--danger" data-act="remove" title="Remove">✕</button>
           </div>
         </div>
         <div class="card-body">${bodyHTML}</div>
-        ${
-          a.status === "error"
-            ? `<div class="card-error-msg">${esc(a.error || "Could not retrieve this article.")}</div>`
-            : ""
+        ${a.status === "error"
+          ? `<div class="card-error-msg">${esc(a.error || "Could not retrieve this article.")}</div>`
+          : ""
         }
-        <div class="card-foot">${statusPill(a)}${
-        a.wordcount != null
+        <div class="card-foot">${statusPill(a)}${a.wordcount != null
           ? `<span>· ${a.wordcount} words</span>`
           : ""
-      }</div>
+        }</div>
       `;
       list.appendChild(card);
     });
@@ -394,9 +388,8 @@
 
   function badge(cls) {
     const meta = CLASS_META[cls] || { label: cls };
-    return `<span class="badge badge--${cls}"><span class="badge-dot" style="background:${
-      CLASS_COLORS[cls]
-    }"></span>${meta.label}</span>`;
+    return `<span class="badge badge--${cls}"><span class="badge-dot" style="background:${CLASS_COLORS[cls]
+      }"></span>${meta.label}</span>`;
   }
 
   function stanceMeter(tr) {
@@ -420,8 +413,8 @@
       <div class="meter-zone meter-zone--for"></div>
       <div class="meter-mid"></div>
       <div class="meter-marker" style="left:${left.toFixed(
-        1
-      )}%;background:${color};box-shadow:0 0 0 2px #fff, 0 0 6px ${color}"></div>
+      1
+    )}%;background:${color};box-shadow:0 0 0 2px #fff, 0 0 6px ${color}"></div>
     </div>`;
   }
 
@@ -485,16 +478,15 @@
         <div class="result-head">
           <div class="result-head-main">
             <span class="card-source"><span class="source-dot"></span>${esc(
-              r.source
-            )}</span>
+        r.source
+      )}</span>
             <h3 class="result-title">${esc(r.title || "(untitled)")}</h3>
           </div>
           <div class="result-headline">
             <span class="headline-label">Strongest signal</span>
             ${headBadge}
-            <span class="conf-readout">${esc(headTopic)}${
-        h.confidence != null ? ` · <b>${pct(h.confidence)}</b>` : ""
-      }</span>
+            <span class="conf-readout">${esc(headTopic)}${h.confidence != null ? ` · <b>${pct(h.confidence)}</b>` : ""
+        }</span>
           </div>
         </div>
         <div class="result-topics">${topicRows}</div>
@@ -614,13 +606,11 @@
     const head = $("#comparison-head");
     head.innerHTML = `
       <div class="stat"><span class="stat-num">${pct(
-        cmp.agreement_rate
-      )}</span><span class="stat-label">Agreement rate</span></div>
-      <div class="stat"><span class="stat-num">${cmp.agreements}/${
-      cmp.total_cells
-    }</span><span class="stat-label">Cells in agreement</span></div>
-      <div class="stat"><span class="stat-num">${
-        cmp.n_disagreements
+      cmp.agreement_rate
+    )}</span><span class="stat-label">Agreement rate</span></div>
+      <div class="stat"><span class="stat-num">${cmp.agreements}/${cmp.total_cells
+      }</span><span class="stat-label">Cells in agreement</span></div>
+      <div class="stat"><span class="stat-num">${cmp.n_disagreements
       }</span><span class="stat-label">Disagreements</span></div>
     `;
 
@@ -704,8 +694,7 @@
     legend.innerHTML = ["for", "neutral", "against", "not_mentioned"]
       .map(
         (c) =>
-          `<span class="legend-item"><span class="legend-swatch" style="background:${
-            CLASS_COLORS[c]
+          `<span class="legend-item"><span class="legend-swatch" style="background:${CLASS_COLORS[c]
           }"></span>${(CLASS_META[c] || {}).label || c}</span>`
       )
       .join("");
