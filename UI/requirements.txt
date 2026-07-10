@@ -6,4 +6,4 @@ beautifulsoup4>=4.12
 gdown
 gunicorn
 whitenoise
-joblib
+-r requirements-ml.txt
