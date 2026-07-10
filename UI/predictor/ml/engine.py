@@ -139,7 +139,8 @@ class PredictionEngine:
             lr_stc_root = Path(cfg["LOGREG_STANCE_SOURCE"])
             bert_bin_root = Path(cfg["BERT_BINARY_SOURCE"])
             bert_stc_root = Path(cfg["BERT_STANCE_SOURCE"])
-
+            print(lr_stc_root)
+            print(bert_stc_root)
             # LogReg
             try:
                 for topic in TOPICS:
