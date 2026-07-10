@@ -7,7 +7,7 @@ BASE_DIR = Path(__file__).resolve().parent
 MODELS_DIR = BASE_DIR / "models"
 ZIP_PATH = BASE_DIR / "models.zip"
 
-FILE_ID = "1tggczkfcBL8q9PIS_OGhSOE9nPkV3PWR"
+FILE_ID = "1a5k-Zy1pw41luKw_snZCwOQE4ehL_wqw"
 
 if not FILE_ID:
     print("GOOGLE_DRIVE_MODELS_ID nije postavljen, preskačem download.")
